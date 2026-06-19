@@ -173,6 +173,69 @@ Repeat → Fit Gaussians to target
 - **Typical toy experiment**: 256 Gaussians, 96×96 images, ~200 iterations ≈ seconds on GPU
 - **Main bottleneck**: Per-pixel-per-Gaussian evaluation; mitigated by tile-based splatting in production systems
 
+## Evaluation: NeRF Synthetic "Lego" — Results & Metrics
+
+The repository's Final_Report_CSE575.pdf and slides describe a set of experiments on the NeRF Synthetic Lego scene comparing three 3DGS training configurations: Baseline, Compact, and Regularized. The numeric results below were provided in the project's report (included in the repository) and verified against the report text supplied by the project author.
+
+### Experimental overview
+- Dataset: NeRF Synthetic — Lego scene (exact image count/resolution not reported in the available report)
+- All configurations were trained for **30,000 iterations**
+- Evaluated metrics: **PSNR (dB)**, **SSIM**, **LPIPS**
+
+### Training profiles / hyperparameters
+
+| Parameter | Compact | Regularized | Baseline |
+|---|---:|---:|---:|
+| SH Degree | 2 | 3 | 3 |
+| Growth Stop | 7,000 | 15,000 | 25,000 |
+| Growth Threshold | 0.0006 | 0.0002 | 0.0002 |
+| Refinement Frequency | 300 | 100 | 200 |
+| Opacity Loss | 0.005 | 0.0001 | 0.0 |
+| SSIM Weight | 0.2 | 0.4 | 0.2 |
+
+### Final quantitative results (at 30k iterations)
+
+| Metric | Compact | Baseline | Regularized | Best |
+|---|---:|---:|---:|---|
+| PSNR (dB) | 22.50 | 26.42 | **26.69** | Regularized |
+| SSIM | 0.807 | 0.916 | **0.924** | Regularized |
+| LPIPS | 0.212 | 0.100 | **0.093** | Regularized |
+
+The Regularized configuration achieved the best overall reconstruction quality (highest PSNR/SSIM and lowest LPIPS).
+
+### Storage efficiency
+
+| Profile | Final File Size | Reduction vs. Baseline |
+|---|---:|---:|
+| Baseline | 11,994 KB (~12.0 MB) | — |
+| Regularized | 8,922 KB (~8.9 MB) | **25.6% smaller** |
+| Compact | 329 KB (~0.3 MB) | **97.2% smaller** |
+
+The Compact profile trades visual fidelity for massive storage reduction; Regularized reduces size while improving visual quality relative to Baseline.
+
+### Key findings (excerpt)
+1. Regularization improved quality and reduced size — Regularized achieved best PSNR/SSIM/LPIPS and reduced file size by ~25.6% vs. Baseline.
+2. Compact configuration dramatically reduced storage (≈97.2% smaller) at the cost of lower reconstruction quality.
+3. Opacity loss reduced floating semi-transparent artifacts (floaters) and produced cleaner geometry under the Regularized setting.
+4. Growth-stop hyperparameter strongly affects convergence: Compact plateaued after the 7k growth stop; Regularized showed steady improvements surpassing Baseline by ≈12k iterations.
+5. 3DGS is highly tunable: small changes to growth/pruning/opacity/SSIM weighting change the balance between quality and size.
+
+### Qualitative observations
+- Baseline and Regularized show similar global reconstruction; Regularized exhibits cleaner geometry and fewer floaters.
+- Compact preserves coarse structure but loses high-frequency texture and specular details.
+
+### Limitations reported in the study
+- The report did not list the number of Gaussian primitives or exact convergence times.
+- Dataset image count and resolution were not specified in the available report extract.
+- Rendering FPS and comparisons versus NeRF implementations were not provided.
+
+### Future work suggested
+- Compare Regularized / Compact 3DGS with NeRF baselines
+- Track Gaussian counts during training and measure FPS across configurations
+- Apply the same experiments to additional NeRF Synthetic scenes and real-world captures
+
+> Note: the numeric tables above were added to this README from the project's Final_Report_CSE575.pdf and the author-provided text. If you want the figures (plots or example renders) embedded in this README, I can add thumbnails linked to the report images or include the relevant rendered PNGs from the repository.
+
 ## References
 
 - **Kerbl et al. (2023)**: "3D Gaussian Splatting for Real-Time Radiance Field Rendering"  
