@@ -175,7 +175,13 @@ Repeat → Fit Gaussians to target
 
 ## Evaluation: NeRF Synthetic "Lego" — Results & Metrics
 
-The repository's Final_Report_CSE575.pdf and slides describe a set of experiments on the NeRF Synthetic Lego scene comparing three 3DGS training configurations: Baseline, Compact, and Regularized. The numeric results below were provided in the project's report (included in the repository) and verified against the report text supplied by the project author.
+Below is an example reconstructed scene (front 3/4 view) from the report. The image file is included in `assets/`.
+
+![Example reconstructed Lego scene — front 3/4 view of the excavator model](assets/lego_example.png)
+
+*Example reconstructed Lego scene — front 3/4 view of the excavator model.*
+
+The repository's Final_Report_CSE575.pdf and slides describe a set of experiments on the NeRF Synthetic Lego scene comparing three 3DGS training configurations: Baseline, Compact, and Regularized.
 
 ### Experimental overview
 - Dataset: NeRF Synthetic — Lego scene (exact image count/resolution not reported in the available report)
